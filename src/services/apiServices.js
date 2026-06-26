@@ -184,6 +184,25 @@ const simulateWeather = (city) => {
   };
 };
 
+// Helper for CORS-restricted APIs on production (e.g., NewsAPI developer plan on Vercel)
+const fetchWithProxyFallback = async (targetUrl) => {
+  try {
+    const res = await axios.get(targetUrl);
+    return res.data;
+  } catch (err) {
+    console.warn("Direct API fetch blocked (likely CORS on live Vercel). Attempting CORS proxy fallback...");
+    try {
+      const proxy1 = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+      const res1 = await axios.get(proxy1);
+      return typeof res1.data === "string" ? JSON.parse(res1.data) : res1.data;
+    } catch (err2) {
+      const proxy2 = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+      const res2 = await axios.get(proxy2);
+      return typeof res2.data === "string" ? JSON.parse(res2.data) : res2.data;
+    }
+  }
+};
+
 // News Fetcher Method
 export const fetchTopHeadlines = async (category = "general") => {
   if (!NEWS_API_KEY || NEWS_API_KEY === "YOUR_API_KEY") {
@@ -199,8 +218,9 @@ export const fetchTopHeadlines = async (category = "general") => {
         ? `/top-headlines?country=us&category=${encodeURIComponent(category)}&apiKey=${NEWS_API_KEY}`
         : `/top-headlines?country=us&apiKey=${NEWS_API_KEY}`;
       
-      const response = await newsApiClient.get(endpoint);
-      const articles = response.data.articles || [];
+      const targetUrl = `https://newsapi.org/v2${endpoint}`;
+      const data = await fetchWithProxyFallback(targetUrl);
+      const articles = data?.articles || [];
       
       const mapped = articles
         .filter(a => a && a.title && a.title !== "[Removed]")
