@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+
+  /* Custom Color System for Premium Aesthetic */
+  --color-super-green: #118a5e;
+  --color-super-neon: #72db85;
+  --color-super-dark: #090b0f;
+  --color-super-card: #141922;
+  --color-super-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Custom Scrollbars for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Base custom animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(114, 219, 133, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(114, 219, 133, 0.5);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* Notebook lined paper styling for the Notes Widget */
+.lined-paper {
+  background-color: #141922;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 2rem;
+  line-height: 2rem;
+}
